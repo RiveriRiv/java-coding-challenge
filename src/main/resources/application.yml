@@ -1,0 +1,29 @@
+spring:
+  main:
+    banner_mode: 'OFF'
+  profiles:
+    active: production
+
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+
+exchange:
+  csv:
+    url: "https://www.bundesbank.de/resource/blob/619182/583369c5b60a4c3e915670bc5b8bee79/472B63F073F071307366337C94F8C870/waehrungsliste-data.xlsx"
