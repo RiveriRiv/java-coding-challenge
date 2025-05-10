@@ -2,7 +2,7 @@ package com.crewmeister.cmcodingchallenge.currency.service.impl;
 
 import com.crewmeister.cmcodingchallenge.currency.repository.CurrencyRepository;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
-import com.crewmeister.cmcodingchallenge.currency.data.Currency;
+import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
