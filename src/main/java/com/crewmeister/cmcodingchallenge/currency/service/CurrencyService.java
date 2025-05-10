@@ -1,6 +1,6 @@
 package com.crewmeister.cmcodingchallenge.currency.service;
 
-import com.crewmeister.cmcodingchallenge.currency.data.Currency;
+import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 
 import java.util.List;
 

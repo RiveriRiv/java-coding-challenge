@@ -1,4 +1,4 @@
-package com.crewmeister.cmcodingchallenge.currency.data;
+package com.crewmeister.cmcodingchallenge.currency.entity;
 
 import lombok.*;
 
@@ -6,10 +6,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "currencies")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class Currency {
     @Id

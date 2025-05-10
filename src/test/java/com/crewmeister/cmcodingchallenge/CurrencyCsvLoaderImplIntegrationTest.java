@@ -1,7 +1,7 @@
 package com.crewmeister.cmcodingchallenge;
 
 import com.crewmeister.cmcodingchallenge.currency.config.CurrencyCsvProperties;
-import com.crewmeister.cmcodingchallenge.currency.data.Currency;
+import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 import com.crewmeister.cmcodingchallenge.currency.loader.impl.CurrencyCsvLoaderImpl;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import org.apache.poi.ss.usermodel.Row;

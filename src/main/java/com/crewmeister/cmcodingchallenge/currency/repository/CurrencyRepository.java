@@ -1,6 +1,6 @@
 package com.crewmeister.cmcodingchallenge.currency.repository;
 
-import com.crewmeister.cmcodingchallenge.currency.data.Currency;
+import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

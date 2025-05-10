@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "currencies.xlsx")
+@ConfigurationProperties(prefix = "exchange.csv")
 @Data
-public class CurrencyCsvProperties {
+public class CurrencyConversionRateCsvProperties {
     private String url;
 }
