@@ -1,7 +1,7 @@
 package com.crewmeister.cmcodingchallenge.runner;
 
 import com.crewmeister.cmcodingchallenge.currency.loader.CurrencyCsvLoader;
-import com.crewmeister.cmcodingchallenge.currency.rates.service.CurrencyConversionRateService;
+import com.crewmeister.cmcodingchallenge.currency.rate.service.CurrencyConversionRateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

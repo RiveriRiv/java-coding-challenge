@@ -1,8 +1,9 @@
 package com.crewmeister.cmcodingchallenge.currency.controller;
 
 import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
-import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
-import com.crewmeister.cmcodingchallenge.currency.rates.service.CurrencyConversionRateService;
+import com.crewmeister.cmcodingchallenge.currency.rate.dto.ConversionResponse;
+import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rate.service.CurrencyConversionRateService;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,5 +49,24 @@ public class CurrencyController {
     public ResponseEntity<CurrencyConversionRate> getCurrencyRateForParticularDate(@PathVariable String currency,
                                                                                    @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return new ResponseEntity<>(currencyConversionRateService.getCurrencyRateForParticularDate(currency, date), HttpStatus.OK);
+    }
+
+    @GetMapping("/currencies/{currency}/convert")
+    public ResponseEntity<ConversionResponse> convertToEur(
+            @PathVariable String currency,
+            @RequestParam BigDecimal amount,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        BigDecimal convertedAmount = currencyConversionRateService.convertToEur(currency, amount, date);
+
+        ConversionResponse response = new ConversionResponse(
+                currency,
+                "EUR",
+                date,
+                amount,
+                convertedAmount
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

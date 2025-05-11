@@ -1,6 +1,6 @@
-package com.crewmeister.cmcodingchallenge.currency.rates.repository;
+package com.crewmeister.cmcodingchallenge.currency.rate.repository;
 
-import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

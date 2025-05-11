@@ -1,4 +1,4 @@
-package com.crewmeister.cmcodingchallenge.currency.rates.entity;
+package com.crewmeister.cmcodingchallenge.currency.rate.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

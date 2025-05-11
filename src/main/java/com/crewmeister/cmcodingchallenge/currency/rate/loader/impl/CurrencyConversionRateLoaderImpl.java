@@ -1,9 +1,9 @@
-package com.crewmeister.cmcodingchallenge.currency.rates.loader.impl;
+package com.crewmeister.cmcodingchallenge.currency.rate.loader.impl;
 
-import com.crewmeister.cmcodingchallenge.currency.rates.config.CurrencyConversionRateCsvProperties;
-import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
-import com.crewmeister.cmcodingchallenge.currency.rates.repository.CurrencyConversionRateRepository;
-import com.crewmeister.cmcodingchallenge.currency.rates.loader.CurrencyConversionRateLoader;
+import com.crewmeister.cmcodingchallenge.currency.rate.config.CurrencyConversionRateCsvProperties;
+import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
+import com.crewmeister.cmcodingchallenge.currency.rate.loader.CurrencyConversionRateLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
