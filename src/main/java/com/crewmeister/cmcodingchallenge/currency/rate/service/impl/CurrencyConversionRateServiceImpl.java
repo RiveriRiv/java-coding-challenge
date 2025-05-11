@@ -1,10 +1,10 @@
-package com.crewmeister.cmcodingchallenge.currency.rates.service.impl;
+package com.crewmeister.cmcodingchallenge.currency.rate.service.impl;
 
-import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
 import com.crewmeister.cmcodingchallenge.currency.exception.CurrencyRateNotFoundException;
-import com.crewmeister.cmcodingchallenge.currency.rates.repository.CurrencyConversionRateRepository;
-import com.crewmeister.cmcodingchallenge.currency.rates.loader.CurrencyConversionRateLoader;
-import com.crewmeister.cmcodingchallenge.currency.rates.service.CurrencyConversionRateService;
+import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
+import com.crewmeister.cmcodingchallenge.currency.rate.loader.CurrencyConversionRateLoader;
+import com.crewmeister.cmcodingchallenge.currency.rate.service.CurrencyConversionRateService;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -44,6 +46,18 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
     public CurrencyConversionRate getCurrencyRateForParticularDate(String currency, LocalDate date) {
         return repository.findByTargetCurrencyAndDate(currency, date)
                 .orElseThrow(() -> new CurrencyRateNotFoundException(currency, date));
+    }
+
+    @Override
+    public BigDecimal convertToEur(String currency, BigDecimal amount, LocalDate date) {
+        CurrencyConversionRate rate = repository.findByTargetCurrencyAndDate(currency, date)
+                .orElseThrow(() -> new CurrencyRateNotFoundException(currency, date));
+
+        if (rate.getConversionRate() == 0) {
+            throw new IllegalArgumentException("Exchange rate cannot be zero");
+        }
+
+        return amount.divide(BigDecimal.valueOf(rate.getConversionRate()), 6, RoundingMode.HALF_UP);
     }
 
     @Transactional

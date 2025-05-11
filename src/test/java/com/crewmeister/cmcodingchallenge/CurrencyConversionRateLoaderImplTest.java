@@ -1,8 +1,8 @@
 package com.crewmeister.cmcodingchallenge;
 
-import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
-import com.crewmeister.cmcodingchallenge.currency.rates.repository.CurrencyConversionRateRepository;
-import com.crewmeister.cmcodingchallenge.currency.rates.loader.impl.CurrencyConversionRateLoaderImpl;
+import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
+import com.crewmeister.cmcodingchallenge.currency.rate.loader.impl.CurrencyConversionRateLoaderImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
