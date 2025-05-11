@@ -1,4 +1,4 @@
-package com.crewmeister.cmcodingchallenge.currency.entity;
+package com.crewmeister.cmcodingchallenge.currency.rates.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +31,6 @@ public class CurrencyConversionRate {
     private String targetCurrency;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private LocalDate date;
 }
