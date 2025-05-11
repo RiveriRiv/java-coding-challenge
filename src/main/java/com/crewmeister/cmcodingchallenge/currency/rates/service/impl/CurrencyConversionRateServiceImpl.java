@@ -1,13 +1,15 @@
-package com.crewmeister.cmcodingchallenge.currency.service.impl;
+package com.crewmeister.cmcodingchallenge.currency.rates.service.impl;
 
-import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
-import com.crewmeister.cmcodingchallenge.currency.entity.CurrencyConversionRate;
-import com.crewmeister.cmcodingchallenge.currency.repository.CurrencyConversionRateRepository;
-import com.crewmeister.cmcodingchallenge.currency.service.CurrencyConversionRateProvider;
-import com.crewmeister.cmcodingchallenge.currency.service.CurrencyConversionRateService;
+import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.exception.CurrencyRateNotFoundException;
+import com.crewmeister.cmcodingchallenge.currency.rates.repository.CurrencyConversionRateRepository;
+import com.crewmeister.cmcodingchallenge.currency.rates.loader.CurrencyConversionRateLoader;
+import com.crewmeister.cmcodingchallenge.currency.rates.service.CurrencyConversionRateService;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,12 +27,23 @@ import java.util.stream.Collectors;
 public class CurrencyConversionRateServiceImpl implements CurrencyConversionRateService {
 
     private final CurrencyConversionRateRepository repository;
-    private final CurrencyConversionRateProvider provider;
+    private final CurrencyConversionRateLoader provider;
     private final CurrencyService currencyService;
 
     @Override
     public List<CurrencyConversionRate> getCurrencyRatesForAllDates(String currency) {
         return repository.findByTargetCurrency(currency);
+    }
+
+    @Override
+    public Page<CurrencyConversionRate> getPageableCurrencyRatesForAllDates(String currency, Pageable pageable) {
+        return repository.findByTargetCurrencyIgnoreCase(currency, pageable);
+    }
+
+    @Override
+    public CurrencyConversionRate getCurrencyRateForParticularDate(String currency, LocalDate date) {
+        return repository.findByTargetCurrencyAndDate(currency, date)
+                .orElseThrow(() -> new CurrencyRateNotFoundException(currency, date));
     }
 
     @Transactional
@@ -48,13 +61,13 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
                 }))
                 .collect(Collectors.toList());
 
-            for (Future<Object> task : tasks) {
-                try {
-                    task.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error("Something went wrong: {}", e.getMessage());
-                }
+        for (Future<Object> task : tasks) {
+            try {
+                task.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Something went wrong: {}", e.getMessage());
             }
+        }
 
         executor.shutdown();
     }

@@ -1,9 +1,9 @@
-package com.crewmeister.cmcodingchallenge.currency.service.impl;
+package com.crewmeister.cmcodingchallenge.currency.rates.loader.impl;
 
-import com.crewmeister.cmcodingchallenge.currency.config.CurrencyConversionRateCsvProperties;
-import com.crewmeister.cmcodingchallenge.currency.entity.CurrencyConversionRate;
-import com.crewmeister.cmcodingchallenge.currency.repository.CurrencyConversionRateRepository;
-import com.crewmeister.cmcodingchallenge.currency.service.CurrencyConversionRateProvider;
+import com.crewmeister.cmcodingchallenge.currency.rates.config.CurrencyConversionRateCsvProperties;
+import com.crewmeister.cmcodingchallenge.currency.rates.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rates.repository.CurrencyConversionRateRepository;
+import com.crewmeister.cmcodingchallenge.currency.rates.loader.CurrencyConversionRateLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CurrencyConversionRateProviderImpl implements CurrencyConversionRateProvider {
+public class CurrencyConversionRateLoaderImpl implements CurrencyConversionRateLoader {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -32,7 +32,7 @@ public class CurrencyConversionRateProviderImpl implements CurrencyConversionRat
 
     @Override
     public void getEurFxRatesSince(LocalDate fromDate, String currencyCode) {
-        List<CurrencyConversionRate> allRates = fetchAllRatesFromBundesbank(currencyCode);
+        List<CurrencyConversionRate> allRates = fetchAllRates(currencyCode);
 
         List<CurrencyConversionRate> rates = allRates.stream()
                 .filter(rate -> !rate.getDate().isBefore(fromDate))
@@ -41,7 +41,7 @@ public class CurrencyConversionRateProviderImpl implements CurrencyConversionRat
         repository.saveAll(rates);
     }
 
-    private List<CurrencyConversionRate> fetchAllRatesFromBundesbank(String currency) {
+    private List<CurrencyConversionRate> fetchAllRates(String currency) {
         try {
             Resource resource = new UrlResource(URI.create(properties.getUrl().replace("{currency}", currency)));
 

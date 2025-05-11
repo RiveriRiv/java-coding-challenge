@@ -1,4 +1,4 @@
-package com.crewmeister.cmcodingchallenge.currency.config;
+package com.crewmeister.cmcodingchallenge.currency.rates.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
