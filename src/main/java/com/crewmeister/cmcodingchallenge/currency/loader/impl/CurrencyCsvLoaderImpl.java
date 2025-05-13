@@ -3,77 +3,69 @@ package com.crewmeister.cmcodingchallenge.currency.loader.impl;
 import com.crewmeister.cmcodingchallenge.currency.config.CurrencyCsvProperties;
 import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 import com.crewmeister.cmcodingchallenge.currency.loader.CurrencyCsvLoader;
+import com.crewmeister.cmcodingchallenge.currency.repository.CurrencyRepository;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class CurrencyCsvLoaderImpl implements CurrencyCsvLoader {
 
-    private final CurrencyService currencyService;
+    private final CurrencyRepository currencyRepository;
     private final CurrencyCsvProperties properties;
-
-    private static final String TEMP_FILE_NAME = "currencies";
-    private static final String TEMP_FILE_SUFFIX = ".xlsx";
 
     @Override
     public void loadCurrencies() {
         try {
-            String url = properties.getUrl();
-            Path tempFile = Files.createTempFile(TEMP_FILE_NAME, TEMP_FILE_SUFFIX);
-            try (InputStream in = new URL(url).openStream()) {
-                Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            }
 
-            List<Currency> currencies = parseExcel(tempFile.toFile());
-            currencyService.saveAllCurrencies(currencies);
+            Resource resource = new UrlResource(URI.create(properties.getUrl()));
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+                reader.lines()
+                        .map(this::parseCsvLine)
+                        .flatMap(List::stream)
+                        .forEach(currencyRepository::save);
+            }
         } catch (IOException e) {
             log.error("Failed to load currencies {}", e.getLocalizedMessage());
         }
     }
 
-    private List<Currency> parseExcel(File file) throws IOException {
-        List<Currency> currencies = new ArrayList<>();
+    private List<Currency> parseCsvLine(String line) {
+        try {
+            Pattern pattern = Pattern.compile("D\\.([A-Z]{3})\\.EUR");
+            Matcher matcher;
 
-        try (Workbook workbook = WorkbookFactory.create(file)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            int skipRows = 3;
-            int currentRow = 0;
+            List<Currency> currencies = new ArrayList<>();
 
-            for (Row row : sheet) {
-                if (currentRow++ <= skipRows) {
-                    continue;
-                }
-
-                Cell codeCell = row.getCell(0);
-                Cell nameCell = row.getCell(2);
-
-                if (codeCell == null || nameCell == null) {
-                    continue;
-                }
-
-                String name = codeCell.getStringCellValue().trim();
-                String code = nameCell.getStringCellValue().trim();
-
-                if (!code.isEmpty()) {
-                    currencies.add(new Currency(code, name));
+            String[] seriesArray = line.split(",");
+            for (String series : seriesArray) {
+                if (!series.endsWith("_FLAGS")) {
+                    matcher = pattern.matcher(series);
+                    if (matcher.find()) {
+                        currencies.add(new Currency(matcher.group(1)));
+                    }
                 }
             }
+
+            return currencies;
+        } catch (Exception e) {
+            log.error("Failed to parse CSV line: {}", line, e);
+            return List.of();
         }
-        return currencies;
     }
 }

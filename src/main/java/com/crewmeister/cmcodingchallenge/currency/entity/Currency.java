@@ -1,6 +1,9 @@
 package com.crewmeister.cmcodingchallenge.currency.entity;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 
@@ -17,8 +20,4 @@ public class Currency {
     @NonNull
     @Column(nullable = false)
     private String code;
-
-    @NonNull
-    @Column(nullable = false)
-    private String name;
 }

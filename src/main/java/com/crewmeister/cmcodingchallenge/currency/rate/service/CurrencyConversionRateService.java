@@ -6,10 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 public interface CurrencyConversionRateService {
-    List<CurrencyConversionRate> getCurrencyRatesForAllDates(String currency);
 
     Page<CurrencyConversionRate> getPageableCurrencyRatesForAllDates(String currency, Pageable pageable);
 
