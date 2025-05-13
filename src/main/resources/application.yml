@@ -33,5 +33,15 @@ exchange:
   csv:
     url: "https://api.statistiken.bundesbank.de/rest/download/BBEX3/D.{currency}.EUR.BB.AC.000?format=csv&lang=en"
 currencies:
-  xlsx:
-    url: "https://www.bundesbank.de/resource/blob/619182/583369c5b60a4c3e915670bc5b8bee79/472B63F073F071307366337C94F8C870/waehrungsliste-data.xlsx"
+  csv:
+    url: "https://api.statistiken.bundesbank.de/rest/download/BBEX3/D..EUR.BB.AC.000?detail=full&format=csv&lang=en"
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    try-it-out-enabled: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json

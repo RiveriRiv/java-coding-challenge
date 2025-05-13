@@ -9,7 +9,10 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "rates")
+@Table(
+        name = "rates",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"date", "targetCurrency"})
+)
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -31,6 +34,6 @@ public class CurrencyConversionRate {
     private String targetCurrency;
 
     @NonNull
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private LocalDate date;
 }

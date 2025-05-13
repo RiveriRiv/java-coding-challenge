@@ -33,11 +33,6 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
     private final CurrencyService currencyService;
 
     @Override
-    public List<CurrencyConversionRate> getCurrencyRatesForAllDates(String currency) {
-        return repository.findByTargetCurrency(currency);
-    }
-
-    @Override
     public Page<CurrencyConversionRate> getPageableCurrencyRatesForAllDates(String currency, Pageable pageable) {
         return repository.findByTargetCurrencyIgnoreCase(currency, pageable);
     }
@@ -70,7 +65,7 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
 
         List<Future<Object>> tasks = currencyService.getAllCurrencies().stream()
                 .map(currency -> executor.submit(() -> {
-                    provider.getEurFxRatesSince(lastDateInDb.plusDays(1), currency.getCode());
+                    provider.loadCurrencyConversionRatesSince(lastDateInDb.plusDays(1), currency.getCode());
                     return null;
                 }))
                 .collect(Collectors.toList());
@@ -79,7 +74,7 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
             try {
                 task.get();
             } catch (InterruptedException | ExecutionException e) {
-                log.error("Something went wrong: {}", e.getMessage());
+                log.error("Something went wrong while loading conversion rates: {}", e.getMessage());
             }
         }
 
