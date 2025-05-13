@@ -3,11 +3,9 @@ package com.crewmeister.cmcodingchallenge;
 import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
 import com.crewmeister.cmcodingchallenge.currency.rate.loader.impl.CurrencyEurConversionRateLoaderImpl;
 import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
-        "currencies.csv.url=file:src/test/resources/test-usd.csv"
+        "exchange.csv.url=file:src/test/resources/test-usd.csv"
 })
 @Transactional
 class CurrencyEurConversionRateLoaderImplTest {

@@ -4,7 +4,6 @@ import com.crewmeister.cmcodingchallenge.currency.config.CurrencyCsvProperties;
 import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 import com.crewmeister.cmcodingchallenge.currency.loader.CurrencyCsvLoader;
 import com.crewmeister.cmcodingchallenge.currency.repository.CurrencyRepository;
-import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;

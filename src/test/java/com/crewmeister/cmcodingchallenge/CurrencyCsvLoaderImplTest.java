@@ -1,19 +1,15 @@
 package com.crewmeister.cmcodingchallenge;
 
-import com.crewmeister.cmcodingchallenge.currency.config.CurrencyCsvProperties;
 import com.crewmeister.cmcodingchallenge.currency.entity.Currency;
 import com.crewmeister.cmcodingchallenge.currency.loader.impl.CurrencyCsvLoaderImpl;
 import com.crewmeister.cmcodingchallenge.currency.repository.CurrencyRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
