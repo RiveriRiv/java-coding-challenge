@@ -2,6 +2,7 @@ package com.crewmeister.cmcodingchallenge.currency.rate.loader.impl;
 
 import com.crewmeister.cmcodingchallenge.currency.rate.config.CurrencyConversionRateCsvProperties;
 import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
+import com.crewmeister.cmcodingchallenge.currency.rate.loader.CurrencyConversionBatchService;
 import com.crewmeister.cmcodingchallenge.currency.rate.loader.CurrencyConversionRateLoader;
 import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class CurrencyEurConversionRateLoaderImpl implements CurrencyConversionRa
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     private final CurrencyConversionRateCsvProperties properties;
-    private final CurrencyConversionRateRepository repository;
+    private final CurrencyConversionBatchService currencyConversionBatchService;
 
     @Override
     public void loadCurrencyConversionRatesSince(LocalDate fromDate, String currencyCode) {
@@ -81,8 +82,13 @@ public class CurrencyEurConversionRateLoaderImpl implements CurrencyConversionRa
     }
 
     private void saveBatch(List<CurrencyConversionRate> batch) {
-        repository.saveAll(batch);
-        batch.clear();
+        try {
+            currencyConversionBatchService.saveBatch(batch);
+        } catch (Exception e) {
+            log.error("Failed to save batch: {}", e.getMessage(), e);
+        } finally {
+            batch.clear();
+        }
     }
 
     private void deleteTempFile(Path tempFile) throws IOException {

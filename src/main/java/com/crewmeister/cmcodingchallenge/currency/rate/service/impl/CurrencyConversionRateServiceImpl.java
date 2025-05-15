@@ -1,9 +1,9 @@
 package com.crewmeister.cmcodingchallenge.currency.rate.service.impl;
 
-import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
 import com.crewmeister.cmcodingchallenge.currency.exception.CurrencyRateNotFoundException;
-import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
+import com.crewmeister.cmcodingchallenge.currency.rate.entity.CurrencyConversionRate;
 import com.crewmeister.cmcodingchallenge.currency.rate.loader.CurrencyConversionRateLoader;
+import com.crewmeister.cmcodingchallenge.currency.rate.repository.CurrencyConversionRateRepository;
 import com.crewmeister.cmcodingchallenge.currency.rate.service.CurrencyConversionRateService;
 import com.crewmeister.cmcodingchallenge.currency.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
@@ -12,16 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -55,7 +51,6 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
         return amount.divide(BigDecimal.valueOf(rate.getConversionRate()), 6, RoundingMode.HALF_UP);
     }
 
-    @Transactional
     @Override
     public void syncRates() {
         LocalDate lastDateInDb = repository.findMaxDate()
@@ -63,21 +58,23 @@ public class CurrencyConversionRateServiceImpl implements CurrencyConversionRate
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
 
-        List<Future<Object>> tasks = currencyService.getAllCurrencies().stream()
-                .map(currency -> executor.submit(() -> {
-                    provider.loadCurrencyConversionRatesSince(lastDateInDb.plusDays(1), currency.getCode());
-                    return null;
-                }))
-                .collect(Collectors.toList());
-
-        for (Future<Object> task : tasks) {
-            try {
-                task.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Something went wrong while loading conversion rates: {}", e.getMessage());
-            }
-        }
+        currencyService.getAllCurrencies().forEach(currency ->
+                executor.execute(() -> {
+                    try {
+                        provider.loadCurrencyConversionRatesSince(lastDateInDb.plusDays(1), currency.getCode());
+                    } catch (Exception e) {
+                        log.error("Error loading rates for currency {}: {}", currency.getCode(), e.getMessage(), e);
+                    }
+                }));
 
         executor.shutdown();
+        try {
+            if (!executor.awaitTermination(10, TimeUnit.MINUTES)) {
+                log.warn("Executor did not terminate in the expected time.");
+            }
+        } catch (InterruptedException e) {
+            log.error("Executor termination interrupted", e);
+            Thread.currentThread().interrupt();
+        }
     }
 }
